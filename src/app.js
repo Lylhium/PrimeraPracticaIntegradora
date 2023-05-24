@@ -7,6 +7,9 @@ import path from "path";
 import __dirname from "./utils.js";
 //import de Router
 import router from "./routes/routes.js";
+// FileSystem
+import productsRouter from "./dao/fileSystem/products.router.js";
+import cartsRouter from "./dao/fileSystem/carts.router.js";
 //import socket-io y controller de message
 import { Server } from "socket.io";
 import Message from "./dao/models/message.js";
@@ -72,6 +75,17 @@ app.post("/chats", createMessage);
 
 const cartManager = new CartManager();
 
+// Ruta para crear un carrito
+app.post("/carts", async (req, res) => {
+  try {
+    const cartId = req.query.cartId; // Obtén el valor del parámetro cartId de la URL
+    const cart = await CartManager.createCart(cartId); // Llama al método createCart del CartManager
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ error: "Error creating cart" });
+  }
+});
+
 app.post("/carts/:cartId/products/:productId", async (req, res) => {
   try {
     const { cartId, productId } = req.params;
@@ -84,5 +98,11 @@ app.post("/carts/:cartId/products/:productId", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// FS : products utilizando router
+app.use("/api/products/", productsRouter);
+
+// products utilizando router
+app.use("/api/carts/", cartsRouter);
 
 export default app;
