@@ -18,7 +18,7 @@ import {
   createMessage,
 } from "../src/dao/controllers/message.js";
 // cart
-import CartManager from "./dao/controllers/carts.js";
+
 // express y listen de servidor
 const app = express();
 const PORT = process.env.PORT || 3030;
@@ -72,32 +72,6 @@ app.get("/chats", getAllMessages);
 
 // Ruta para crear un nuevo mensaje
 app.post("/chats", createMessage);
-
-const cartManager = new CartManager();
-
-// Ruta para crear un carrito
-app.post("/carts", async (req, res) => {
-  try {
-    const cartId = req.query.cartId; // Obtén el valor del parámetro cartId de la URL
-    const cart = await CartManager.createCart(cartId); // Llama al método createCart del CartManager
-    res.json(cart);
-  } catch (error) {
-    res.status(500).json({ error: "Error creating cart" });
-  }
-});
-
-app.post("/carts/:cartId/products/:productId", async (req, res) => {
-  try {
-    const { cartId, productId } = req.params;
-    const cart = await cartManager.addToCart(
-      parseInt(cartId),
-      parseInt(productId)
-    );
-    res.json(cart);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // FS : products utilizando router
 app.use("/api/products/", productsRouter);

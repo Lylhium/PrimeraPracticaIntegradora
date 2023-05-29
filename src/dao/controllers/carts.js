@@ -1,22 +1,40 @@
-import Cart from "../models/carts.js";
+import mongoose from "mongoose";
+import db from "../models/db.js";
 
-class CartManager {
-  async addToCart(cartId, productId) {
-    try {
-      const cart = await Cart.findById(cartId);
-      if (!cart) {
-        throw new Error("Cart not found");
-      }
+const collection = "carts";
 
-      cart.products.push(productId);
-      await cart.save();
+const schema = new mongoose.Schema({
+  products: {
+    type: [
+      {
+        id: {
+          type: Number,
+          required: true,
+          unique: true,
+        },
+        Title: {
+          type: String,
+          required: true,
+        },
+        Description: {
+          type: String,
+          required: true,
+        },
+        Price: {
+          type: Number,
+          required: true,
+        },
+        Thumbnail: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
+    required: true,
+    default: [],
+  },
+});
 
-      return cart;
-    } catch (error) {
-      console.error("Error adding product to cart", error);
-      throw error;
-    }
-  }
-}
+const cartModel = db.model(collection, schema);
 
-export default CartManager;
+export default cartModel;

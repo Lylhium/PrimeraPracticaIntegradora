@@ -1,17 +1,40 @@
 import mongoose from "mongoose";
+import db from "../models/db.js";
 
-const cartSchema = new mongoose.Schema({
-  id: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
+const collection = "carts";
+
+const schema = new mongoose.Schema({
   products: {
-    type: [Number],
+    type: [
+      {
+        id: {
+          type: Number,
+          required: true,
+          unique: true,
+        },
+        Title: {
+          type: String,
+          required: true,
+        },
+        Description: {
+          type: String,
+          required: true,
+        },
+        Price: {
+          type: Number,
+          required: true,
+        },
+        Thumbnail: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
+    required: true,
     default: [],
   },
 });
 
-const Cart = mongoose.model("Cart", cartSchema);
+const cartModel = db.model(collection, schema);
 
-export default Cart;
+export default cartModel;
